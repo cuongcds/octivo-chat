@@ -1,0 +1,377 @@
+/*
+ * Self-contained styles for the embeddable Octivo Chat widget. Unlike
+ * assets/plugins/livechat/live-chat.css (which relies on CSS variables
+ * defined by the host theme page — salon-booking/cashback/genlinks), this
+ * file defines its own tokens under .octivo-chat-root so it renders
+ * correctly when injected into any third-party website that has no such
+ * variables. Every selector is namespaced with `octivo-chat-` to avoid
+ * clashing with the embedding site's own CSS.
+ */
+.octivo-chat-root {
+  --oc-accent: #206bc4;
+  --oc-accent-light: #206bc4;
+  --oc-accent-contrast: #ffffff;
+  --oc-surface: #ffffff;
+  --oc-surface-2: #f4f6f8;
+  --oc-border: #e2e6ea;
+  --oc-text: #182433;
+  --oc-muted: #6b7785;
+  --oc-radius-sm: 10px;
+  --oc-shadow-button: 0 6px 16px rgba(32, 107, 196, .28);
+  --oc-offset-x: 16px;
+  --oc-offset-y: 16px;
+  all: initial;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--oc-text);
+}
+.octivo-chat-root *,
+.octivo-chat-root *::before,
+.octivo-chat-root *::after {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+.octivo-chat-root .octivo-chat-hidden { display: none !important; }
+
+.octivo-chat-root button {
+  font: inherit;
+}
+
+.octivo-chat-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px 20px; border: none; border-radius: var(--oc-radius-sm);
+  font-size: .95rem; font-weight: 600; cursor: pointer; transition: .2s;
+  background: var(--oc-accent);
+  color: var(--oc-accent-contrast);
+  box-shadow: var(--oc-shadow-button);
+}
+.octivo-chat-btn:hover { filter: brightness(1.06); }
+.octivo-chat-btn:disabled { opacity: .45; cursor: not-allowed; filter: none; box-shadow: none; }
+
+.octivo-chat-icon-btn {
+  width: 40px; height: 40px; border-radius: 12px;
+  border: 1px solid var(--oc-border); background: var(--oc-surface-2);
+  color: var(--oc-text); cursor: pointer; display: grid; place-items: center;
+  flex-shrink: 0; transition: .2s;
+}
+.octivo-chat-icon-btn:hover { border-color: var(--oc-accent); color: var(--oc-accent); }
+.octivo-chat-icon-btn svg { width: 20px; height: 20px; }
+
+/* Bubble (FAB) — plain circle by default, or a labeled pill when a text is configured. */
+.octivo-chat-fab {
+  position: fixed;
+  bottom: calc(var(--oc-offset-y) + env(safe-area-inset-bottom, 0));
+  z-index: 2147483000;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  background: var(--oc-accent);
+  color: var(--oc-accent-contrast);
+  box-shadow: var(--oc-shadow-button);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform .2s, box-shadow .2s;
+}
+.octivo-chat-fab--right { right: var(--oc-offset-x); }
+.octivo-chat-fab--left { left: var(--oc-offset-x); }
+.octivo-chat-fab:hover { transform: scale(1.05); }
+.octivo-chat-fab svg { width: 26px; height: 26px; flex-shrink: 0; }
+.octivo-chat-fab__label {
+  font-size: .9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.octivo-chat-fab--labeled {
+  width: auto;
+  height: 48px;
+  border-radius: 24px;
+  padding: 0 20px 0 16px;
+}
+.octivo-chat-fab--labeled svg { width: 22px; height: 22px; }
+
+/* Panel */
+.octivo-chat-panel { position: fixed; inset: 0; z-index: 2147483001; pointer-events: none; }
+.octivo-chat-panel:not(.octivo-chat-hidden) { pointer-events: auto; }
+.octivo-chat-panel__backdrop {
+  position: absolute; inset: 0;
+  background: rgba(20, 20, 25, 0.45);
+  opacity: 0;
+  transition: opacity .25s;
+}
+.octivo-chat-panel:not(.octivo-chat-hidden) .octivo-chat-panel__backdrop { opacity: 1; }
+
+.octivo-chat-panel__sheet {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: 100dvh;
+  background: var(--oc-surface);
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform .28s ease, opacity .28s ease;
+}
+.octivo-chat-panel:not(.octivo-chat-hidden) .octivo-chat-panel__sheet { transform: translateY(0); }
+
+.octivo-chat-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--oc-border);
+}
+.octivo-chat-panel__header h2 { font-size: 1.05rem; font-weight: 700; margin: 0; }
+.octivo-chat-panel__sub { font-size: .78rem; color: var(--oc-muted); margin: 2px 0 0; }
+.octivo-chat-panel__header-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+/* Full-screen toggle is a desktop-only affordance — mobile is already full-viewport by default. */
+.octivo-chat-fullscreen-btn { display: none; }
+
+.octivo-chat-panel__messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+.octivo-chat-panel__empty {
+  text-align: center;
+  color: var(--oc-muted);
+  font-size: .88rem;
+  padding: 24px 8px;
+  margin: 0;
+}
+
+.octivo-chat-message { display: flex; flex-direction: column; max-width: 85%; }
+.octivo-chat-message--mine { align-self: flex-end; align-items: flex-end; }
+.octivo-chat-message--theirs { align-self: flex-start; align-items: flex-start; }
+.octivo-chat-message__time { font-size: .68rem; opacity: .75; margin-top: 4px; padding: 0 2px; }
+
+.octivo-chat-bubble {
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: .88rem;
+  line-height: 1.45;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.octivo-chat-bubble--mine {
+  background: var(--oc-accent);
+  color: var(--oc-accent-contrast);
+  border-bottom-right-radius: 4px;
+}
+.octivo-chat-bubble--theirs {
+  background: var(--oc-surface-2);
+  border: 1px solid var(--oc-border);
+  border-bottom-left-radius: 4px;
+}
+.octivo-chat-bubble__img {
+  display: block; width: 100%; max-width: 220px; max-height: 220px;
+  object-fit: cover; border-radius: 10px; margin-top: 6px; cursor: zoom-in;
+}
+.octivo-chat-bubble__title { font-weight: 700; margin-top: 6px; }
+.octivo-chat-bubble__button { margin-top: 6px; }
+.octivo-chat-bubble__button a {
+  display: flex; align-items: center; justify-content: center; width: 100%;
+  padding: 6px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.2);
+  color: inherit; text-decoration: none; font-weight: 600; font-size: .82rem;
+}
+.octivo-chat-bubble--theirs .octivo-chat-bubble__button a {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Composer */
+.octivo-chat-panel__composer {
+  border-top: 1px solid var(--oc-border);
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0));
+  background: var(--oc-surface);
+}
+.octivo-chat-panel__input-row { display: flex; gap: 8px; align-items: flex-end; }
+.octivo-chat-input-wrap {
+  display: flex; align-items: flex-end; gap: 4px; flex: 1; min-width: 0;
+  border: 1px solid var(--oc-border); border-radius: 22px; background: var(--oc-surface);
+  padding: 5px 6px; box-sizing: border-box; transition: border-color .15s;
+}
+.octivo-chat-input-wrap:focus-within { border-color: var(--oc-accent); }
+.octivo-chat-input-wrap textarea {
+  flex: 1; min-width: 0; min-height: 32px; max-height: 220px; resize: none;
+  appearance: none; -webkit-appearance: none;
+  border: none; background: transparent;
+  padding: 6px 2px; font-size: .9rem; line-height: 1.4;
+  box-sizing: border-box; overflow-y: hidden; outline: none;
+}
+.octivo-chat-send { width: 44px; height: 44px; padding: 0; border-radius: 50%; flex-shrink: 0; position: relative; }
+.octivo-chat-send.is-sending { pointer-events: none; }
+.octivo-chat-send.is-sending svg { display: none; }
+.octivo-chat-send.is-sending::after {
+  content: ''; display: inline-block; width: 1em; height: 1em;
+  border: 2px solid color-mix(in srgb, currentColor 40%, transparent);
+  border-top-color: currentColor;
+  border-radius: 50%; animation: octivo-chat-spin .6s linear infinite;
+}
+@keyframes octivo-chat-spin { to { transform: rotate(360deg); } }
+
+/* Attach / emoji tools — sit inside the same rounded pill as the textarea */
+.octivo-chat-tool {
+  width: 32px; height: 32px; border: none; border-radius: 50%;
+  background: transparent; display: grid; place-items: center;
+  cursor: pointer; font-size: 1.05rem; flex-shrink: 0; color: var(--oc-accent);
+  transition: background-color .15s;
+}
+.octivo-chat-tool:hover { background: var(--oc-surface-2); }
+.octivo-chat-tool--emoji { color: inherit; font-size: 1.15rem; }
+.octivo-chat-file-input {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* Emoji picker popup */
+.octivo-chat-emoji {
+  margin-bottom: 8px; border: 1px solid var(--oc-border); border-radius: 12px;
+  overflow: hidden; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+.octivo-chat-emoji emoji-picker { width: 100%; height: 280px; max-height: 40vh; }
+
+/* Attachment preview (above the input row, before sending) */
+.octivo-chat-panel__preview {
+  margin-bottom: 8px; padding: 8px 10px; border: 1px solid var(--oc-border);
+  border-radius: 12px; background: var(--oc-surface-2);
+}
+.octivo-chat-panel__preview-inner { display: flex; align-items: center; gap: 10px; }
+.octivo-chat-panel__preview-img {
+  width: 44px; height: 44px; object-fit: cover; border-radius: 8px; flex-shrink: 0;
+}
+.octivo-chat-panel__preview-name {
+  flex: 1; min-width: 0; font-size: .82rem; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.octivo-chat-panel__preview-remove {
+  width: 28px; height: 28px; flex-shrink: 0; border: none; background: transparent;
+}
+
+/* Photo message + lightbox-style link */
+.octivo-chat-lightbox-trigger {
+  display: block; line-height: 0; border-radius: 10px; overflow: hidden;
+  border: none; padding: 0; background: transparent; cursor: zoom-in;
+}
+
+/* Guest info gate (name/phone) */
+.octivo-chat-gate {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+.octivo-chat-gate p { margin: 0 0 4px; font-size: .86rem; color: var(--oc-muted); }
+.octivo-chat-gate label {
+  display: block; font-size: .8rem; font-weight: 600; margin-bottom: 4px;
+}
+.octivo-chat-gate input {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--oc-border);
+  border-radius: 10px; font-size: .9rem; outline: none;
+}
+.octivo-chat-gate input:focus { border-color: var(--oc-accent); }
+.octivo-chat-gate__error {
+  font-size: .78rem; color: #d63939; min-height: 1em;
+}
+
+.octivo-chat-toast {
+  position: fixed;
+  bottom: calc(84px + env(safe-area-inset-bottom, 0));
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 20, 25, 0.92);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: .82rem;
+  z-index: 2147483002;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.octivo-chat-toast--show { opacity: 1; }
+
+@media (min-width: 576px) {
+  .octivo-chat-fullscreen-btn { display: grid; }
+
+  .octivo-chat-panel__sheet {
+    inset: auto;
+    top: auto;
+    left: auto;
+    bottom: 24px;
+    width: min(380px, calc(100vw - 48px));
+    height: min(560px, calc(100dvh - 48px));
+    max-height: min(560px, calc(100dvh - 48px));
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
+    transform: translateY(12px);
+    opacity: 0;
+    transition: transform .28s ease, opacity .28s ease, width .22s ease, height .22s ease, bottom .22s ease, right .22s ease, left .22s ease, border-radius .22s ease;
+  }
+  /* Square off the corner nearest the floating bubble (bottom, same side as widget_position); round the other 3. */
+  .octivo-chat-panel--right .octivo-chat-panel__sheet { right: 24px; border-bottom-right-radius: 0; }
+  .octivo-chat-panel--left .octivo-chat-panel__sheet { left: 24px; border-bottom-left-radius: 0; }
+  .octivo-chat-panel:not(.octivo-chat-hidden) .octivo-chat-panel__sheet {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* Full-screen toggle: expand the docked panel to fill the viewport. */
+  .octivo-chat-panel--fullscreen .octivo-chat-panel__sheet {
+    top: 24px; right: 24px; bottom: 24px; left: 24px;
+    width: auto; height: auto; max-height: none;
+    border-radius: 16px;
+  }
+  .octivo-chat-panel--fullscreen.octivo-chat-panel--right .octivo-chat-panel__sheet,
+  .octivo-chat-panel--fullscreen.octivo-chat-panel--left .octivo-chat-panel__sheet {
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+  }
+}
+
+/*
+ * Preview mode (admin "Live Chat" tab): the panel renders inline, docked
+ * inside a container the admin page provides, instead of position:fixed
+ * over the whole viewport — so it sits inside the settings card rather
+ * than floating over the CRM UI. No fab/backdrop; always "open".
+ */
+.octivo-chat-preview {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 520px;
+  border: 1px solid var(--oc-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+.octivo-chat-preview .octivo-chat-panel__backdrop { display: none; }
+.octivo-chat-preview .octivo-chat-panel__sheet {
+  position: static;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+}
+.octivo-chat-preview .octivo-chat-fab {
+  position: absolute;
+  bottom: var(--oc-offset-y);
+}
+
+/* "bubble" sub-view: only the floating button is meaningful, hide the sheet. */
+.octivo-chat-preview.octivo-chat-preview--bubble-only {
+  background: var(--oc-surface-2);
+}
+.octivo-chat-preview--bubble-only .octivo-chat-panel__sheet { display: none; }
