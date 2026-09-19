@@ -1,0 +1,16 @@
+{
+  "name": "octivo-chat",
+  "version": "1.0.0",
+  "description": "Embeddable chat widget for Octivo CRM website channels",
+  "main": "dist/octivo-chat.min.js",
+  "style": "dist/octivo-chat.min.css",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cuongcds/octivo-chat.git"
+  },
+  "license": "MIT"
+}
