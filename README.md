@@ -13,6 +13,8 @@ Supports image attachments (JPG/PNG/GIF/WEBP, up to 8MB) and an emoji picker.
 
 Replace `your-channel-slug` with your channel source id.
 
+By default, the widget talks to `https://octivo.shplinks.com`. To point it at a different Octivo instance, add `data-host="https://your-instance.example.com"` to the `<script>` tag, or pass `host` to `init()`.
+
 ## Usage
 
 ```html

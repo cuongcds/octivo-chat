@@ -1,20 +1,17 @@
 /**
- * Octivo Chat — embeddable widget for `website` channels with
- * website_theme = 'customize'. Self-contained: injects its own CSS + DOM
- * into the host page, so it can be dropped into any third-party site via
- * a single <script> tag. Independent from assets/plugins/livechat/
- * (used by the salon-booking/cashback/genlinks themes) — no shared code,
- * so this widget can evolve without risking those flows.
+ * Octivo Chat — embeddable chat widget. Self-contained: injects its own CSS
+ * + DOM into the host page, so it can be dropped into any third-party site
+ * via a single <script> tag served from the Octivo CDN.
  *
  * Supports image attachments (JPG/PNG/GIF/WEBP, up to 8MB) via the
  * composer's attach button, and an emoji picker (emoji-picker-element,
- * lazy-loaded on first use — same library used elsewhere in this CRM).
- * On desktop, the header also has a full-screen toggle (expand the docked
- * popup to fill the viewport, and shrink it back) — state persists across
- * close/reopen within the same page session, but not across reloads.
+ * lazy-loaded on first use). On desktop, the header also has a full-screen
+ * toggle (expand the docked popup to fill the viewport, and shrink it back)
+ * — state persists across close/reopen within the same page session, but
+ * not across reloads.
  *
  * Usage:
- *   <script src=".../octivo-chat.js" data-channel="@abc123" async></script>
+ *   <script src="https://cdn.octivo.example/octivo-chat.js" data-channel="@abc123" async></script>
  *   // optional, any time after the script tag:
  *   window.OctivoChat.init({
  *     name: 'Jane', phone: '0901234567', autoOpen: true,
@@ -23,10 +20,15 @@
  *   });
  *   document.querySelector('#my-chat-button').addEventListener('click', OctivoChat.open);
  *   window.addEventListener('octivochat:close', function (e) { ... }); // same close notification as an event
+ *
+ * API host: defaults to https://octivo.shplinks.com. Override via
+ * data-host="https://your-crm.example.com" on the <script> tag, or
+ * init({ host: 'https://your-crm.example.com' }).
  */
 (function (global, document) {
   'use strict';
 
+  var DEFAULT_API_HOST = 'https://octivo.shplinks.com';
   var CSS_HREF = currentScriptBase() + 'octivo-chat.css';
   var API_BASE = currentScriptOrigin();
   var POLL_MS = 5000;
@@ -58,7 +60,7 @@
 
   function currentScriptBase() {
     var src = document.currentScript ? document.currentScript.src : '';
-    if (!src) return '/assets/plugins/octivo-chat/';
+    if (!src) return '';
     return src.slice(0, src.lastIndexOf('/') + 1);
   }
 
@@ -70,6 +72,17 @@
     } catch (e) {
       return '';
     }
+  }
+
+  /** data-host="https://your-crm.example.com" on the <script> tag, for sites that only use the auto-init (no manual init() call). */
+  function readHostDataAttr() {
+    var el = document.currentScript || document.querySelector('script[data-channel]');
+    return el ? (el.getAttribute('data-host') || '') : '';
+  }
+
+  function resolveApiBase(options) {
+    var host = (options && options.host) || readHostDataAttr() || API_BASE || DEFAULT_API_HOST;
+    return String(host).replace(/\/+$/, '');
   }
 
   function $(sel, root) {
@@ -851,6 +864,7 @@
       return Promise.reject(new Error('OctivoChat.init: missing channel'));
     }
     state.channelSourceId = channel;
+    API_BASE = resolveApiBase(options);
 
     injectCss();
     buildDom();
