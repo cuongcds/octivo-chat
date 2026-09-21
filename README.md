@@ -7,8 +7,8 @@ Supports image attachments (JPG/PNG/GIF/WEBP, up to 8MB) and an emoji picker.
 ## Install via jsDelivr
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/octivo-chat@0.1.0/dist/octivo-chat.min.css">
-<script src="https://cdn.jsdelivr.net/npm/octivo-chat@0.1.0/dist/octivo-chat.min.js" data-channel="your-channel-slug" async></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/octivo-chat@0.1.1/dist/octivo-chat.min.css">
+<script src="https://cdn.jsdelivr.net/npm/octivo-chat@0.1.1/dist/octivo-chat.min.js" data-channel="your-channel-slug" async></script>
 ```
 
 Replace `your-channel-slug` with your channel source id.
@@ -18,7 +18,7 @@ By default, the widget talks to `https://octivo.shplinks.com`. To point it at a 
 ## Usage
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/octivo-chat@0.1.0/dist/octivo-chat.min.js" data-channel="your-channel-slug" async></script>
+<script src="https://cdn.jsdelivr.net/npm/octivo-chat@0.1.1/dist/octivo-chat.min.js" data-channel="your-channel-slug" async></script>
 <script>
   // optional, any time after the script tag:
   window.OctivoChat.init({
