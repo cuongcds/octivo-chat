@@ -30,7 +30,7 @@
 
   var DEFAULT_API_HOST = 'https://octivo.shplinks.com';
   var CSS_HREF = currentScriptBase() + 'octivo-chat.css';
-  var API_BASE = currentScriptOrigin();
+  var API_BASE = '';
   var POLL_MS = 5000;
   var LS_PREFIX = 'octivo_chat_';
 
@@ -64,24 +64,19 @@
     return src.slice(0, src.lastIndexOf('/') + 1);
   }
 
-  function currentScriptOrigin() {
-    var src = document.currentScript ? document.currentScript.src : '';
-    if (!src) return '';
-    try {
-      return new URL(src).origin;
-    } catch (e) {
-      return '';
-    }
-  }
-
   /** data-host="https://your-crm.example.com" on the <script> tag, for sites that only use the auto-init (no manual init() call). */
   function readHostDataAttr() {
     var el = document.currentScript || document.querySelector('script[data-channel]');
     return el ? (el.getAttribute('data-host') || '') : '';
   }
 
+  /**
+   * Deliberately does NOT fall back to the <script> tag's own origin: this
+   * widget ships from a CDN, so its src origin (e.g. cdn.jsdelivr.net) is
+   * never the API host — only an explicit override or the default CRM apply.
+   */
   function resolveApiBase(options) {
-    var host = (options && options.host) || readHostDataAttr() || API_BASE || DEFAULT_API_HOST;
+    var host = (options && options.host) || readHostDataAttr() || DEFAULT_API_HOST;
     return String(host).replace(/\/+$/, '');
   }
 
